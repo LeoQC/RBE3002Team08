@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(rbe3002T8)
+project(RBE3002Team08)
 
 
 find_package(catkin REQUIRED COMPONENTS

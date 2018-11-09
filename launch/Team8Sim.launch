@@ -3,7 +3,7 @@
 
 	<!-- rbe3002 = current package name -->
   <include file="$(find turtlebot3_navigation)/launch/turtlebot3_navigation.launch">
-    <arg name="map_file" value="$(find rbe3002)/maps/simple_map.yaml"/>
+    <arg name="map_file" value="$(find RBE3002Team08)/maps/simple_map.yaml"/>
   </include>
 
 
