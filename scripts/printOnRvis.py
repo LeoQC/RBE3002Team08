@@ -55,7 +55,8 @@ if __name__ == "__main__":
 		pos.pose.position.x = 0 
 		pos.pose.position.y = ii
 		posList.append(pos)
-		
+	navPath.header.frame_id = 'map'
+	# print(posList)
 	navPath.poses=posList	
 
 	pub = rospy.Publisher('move_base/NavfnROS/plan',Path,queue_size=1)
@@ -66,7 +67,7 @@ if __name__ == "__main__":
 	for j in range(5): 
 		print "I bloody did something"
 		pub.publish(navPath)
-		pub.publish(EmptyPath)
+		# pub.publish(EmptyPath)
 		print "I did something else!"
 		rospy.sleep(2)
 		if rospy.is_shutdown() :
