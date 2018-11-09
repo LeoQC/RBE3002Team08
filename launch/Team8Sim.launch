@@ -1,5 +1,16 @@
 <launch>
 
+  <!-- Turn on a fake turtlebot -->
+ <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
+
+  <param name="tb3_model" value="$(arg model)"/>
+
+  <include file="$(find turtlebot3_bringup)/launch/includes/description.launch.xml">
+    <arg name="model" value="$(arg model)" />
+  </include>
+
+  <node pkg="turtlebot3_fake" type="turtlebot3_fake_node" name="turtlebot3_fake_node" output="screen" />
+
 
 	<!-- rbe3002 = current package name -->
   <include file="$(find turtlebot3_navigation)/launch/turtlebot3_navigation.launch">
