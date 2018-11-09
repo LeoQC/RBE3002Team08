@@ -1,8 +1,8 @@
 <launch>
 
   <include file="$(find turtlebot3_navigation)/launch/turtlebot3_navigation.launch">
-    <arg name="map_file" value="$(find rbe3002_template)/maps/maze2.yaml"/>
+    <arg name="map_file" value="$(find rbe3002)/maps/maze2.yaml"/>
   </include>
 
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find turtlebot3_navigation)/rviz/turtlebot3_nav.rviz"/>
+  <!-- <node name="rviz2" pkg="rviz" type="rviz" args="-d $(find turtlebot3_navigation)/rviz/turtlebot3_nav.rviz"/> -->
 </launch>
