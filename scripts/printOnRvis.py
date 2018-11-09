@@ -25,16 +25,15 @@ def printingMap(map):
 	width = map.info.width
 	print " width is :", width
 	
-	output = "->"
-	for cell in range (0,width):
-		content = map.data[cell]
-		if (content == 0 ):
-			output +="O"
-		else:
-			output+="+"
-	print output
+	# output = "->"
+	# for cell in range (0,width):
+	# 	content = map.data[cell]
+	# 	if (content == 0 ):
+	# 		output +="O"
+	# 	else:
+	# 		output+="+"
+	# print output
 
-	for item in range(0,100): print map.data[item]
 	
 
 
