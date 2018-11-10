@@ -52,6 +52,14 @@ def world_to_map(x, y, my_map):
         :param y: float of y position
         :return: tuple of converted point
     """
+    xOff = my_map.info.origin.position.x
+    yOff = my_map.info.origin.position.y
+    scale = my_map.info.resolution
+    xMap = (x - xOff) / scale
+    yMap = (y - yOff) / scale
+    xMap = int(xMap)
+    yMap = int(yMap)
+    return (xMap,yMap)
 
 def map_to_world(x, y, my_map):
     """

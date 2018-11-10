@@ -42,9 +42,20 @@ def dynamic_map_client():
 	except rospy.ServiceException, e:
 		print "Service call failed: %s"%e
 
+def printEmptyPath ():
+	EmptyPath = Path()
+	EmptyPath.header.frame_id = 'map'
+	pathPub.publish(EmptyPath)
+
+
 
 def map_to_world(x, y, my_map):
-
+	"""
+	converts a point from the map to the world
+	:param x: float of x position
+	:param y: float of y position
+	:return: tuple of converted point
+	"""
 	xOff = my_map.info.origin.position.x
 	yOff = my_map.info.origin.position.y
 	scale = my_map.info.resolution
@@ -53,6 +64,7 @@ def map_to_world(x, y, my_map):
 	return (xWorld,yWorld)
 
 def testingMap_to_world(my_map):
+	
 	# make a path in world from cell 0,0 to cell 5,5 
 	mapPoints = [(0,0),(1,1),(2,2),(3,3),(4,3),(5,3) ] # the index coords in maps
 	printPath = Path()
@@ -68,11 +80,47 @@ def testingMap_to_world(my_map):
 	printPath.poses=posList	
 	pathPub.publish(printPath)
 
-def printEmptyPath ():
-	EmptyPath = Path()
-	EmptyPath.header.frame_id = 'map'
-	pathPub.publish(EmptyPath)
+def world_to_map(x, y, my_map):
+	"""
+    converts a point from the world to the map
+    :param x: float of x position
+    :param y: float of y position
+    :return: tuple of converted point
+	"""
+	xOff = my_map.info.origin.position.x
+	yOff = my_map.info.origin.position.y
+	scale = my_map.info.resolution
+	xMap = (x - xOff) / scale
+	yMap = (y - yOff) / scale
+	xMap = int(xMap)
+	yMap = int(yMap)
+	return (xMap,yMap)
 
+def testingWorld_to_map(my_map):
+	
+	# make a path in world from cell 0,0 to cell 5,5 
+	worldPoints = [(-5,-5),(0,0),(-5,0),(-4,1),(-3,1 ),(-3,2),(0,2) ] # the index coords in maps
+
+	# map this back to map space
+	mapPoints =[]
+	for point in worldPoints:
+		mapPoint = world_to_map(point[0],point[1],my_map)
+		print "point on Map: " ,mapPoint
+		mapPoints.append(mapPoint)
+
+
+	printPath = Path()
+	printPath.header.frame_id = 'map'
+	posList = []
+	for mapPoint in mapPoints:
+		printPoint = map_to_world(mapPoint[0],mapPoint[1],my_map)
+		print "world Point at! :" , printPoint
+		pos = PoseStamped()
+		pos.pose.position.x = printPoint[0]
+		pos.pose.position.y = printPoint[1]
+		posList.append(pos)
+	printPath.poses=posList	
+	pathPub.publish(printPath)
 
 
 if __name__ == "__main__":
@@ -89,7 +137,8 @@ if __name__ == "__main__":
 
 	printEmptyPath()
 	
-	testingMap_to_world(my_map)
+	# testingMap_to_world(my_map)
+	testingWorld_to_map(my_map)
 
 
 
