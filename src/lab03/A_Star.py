@@ -35,7 +35,7 @@ class A_Star:
             :return: Path()
         """
         print 'handling a star'
-        pass
+        return
 
        
 
