@@ -49,10 +49,10 @@ if __name__ == "__main__":
 	posList = []
 	
 	ii=0
-	for ii in range(0,pathLength):
+	for ii in range(0,pathLength*10):
 		pos = PoseStamped()
 		pos.pose.position.x = 0 
-		pos.pose.position.y = ii
+		pos.pose.position.y = ii/2
 		posList.append(pos)
 	navPath.header.frame_id = 'map'
 	# print(posList)
@@ -68,6 +68,6 @@ if __name__ == "__main__":
 		pub.publish(navPath)
 		# pub.publish(EmptyPath)
 		print "I did something else!"
-		rospy.sleep(2)
+		rospy.sleep(0.5)
 		if rospy.is_shutdown() :
 			break
