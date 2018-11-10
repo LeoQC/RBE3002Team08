@@ -130,10 +130,18 @@ class A_Star:
             :return: list of tuples
        """
 
-        if came_from[goal] == start:
-            return came_from[goal]
-        else:
-            self.reconstruct_path(start, came_from[goal], came_from)
+        path = []
+        stack = list()
+
+        while came_from.get(goal) != None:
+            stack.append(goal)
+            goal = came_from.get(goal)
+        stack.append(start)
+
+        while len(stack):
+            path.append(stack.pop())
+
+        return path
   
 
     def optimize_path(self, path):
