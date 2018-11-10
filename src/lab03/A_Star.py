@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 import rospy
+from nav_msgs.srv import GetPlan, Path
+from geometry_msgs.msg import PoseStamped
 
 
 class A_Star:
@@ -13,7 +15,16 @@ class A_Star:
         """
 
         rospy.init_node("a_star")  # start node
- 
+        self.planService = rospy.Service('A_Star', GetPlan, self.handle_a_star)
+        # Get plan Service contains fields:
+        #   start as geometry_msgs/PoseStamped
+        #   goal as geometry_msgs/PoseStamped
+        #   plan as nav_msgs/Plan
+        print 'ready to plan a path using A star'
+        rospy.spin()
+
+
+
 
     def handle_a_star(self, req):
 
@@ -23,6 +34,7 @@ class A_Star:
             :param req: GetPlan
             :return: Path()
         """
+        print 'handling a star'
         pass
 
        
@@ -75,7 +87,7 @@ class A_Star:
             :param came_from: dictionary of tuples
             :return: list of tuples
        """
-       pass
+        pass
   
 
     def optimize_path(self, path):
@@ -107,4 +119,5 @@ class A_Star:
 
 
 if __name__ == '__main__':
+    astar = A_Star()
     pass
