@@ -109,6 +109,10 @@ class A_Star:
             :param point2: tuple of location
             :return: dist between two points
         """
+        xDiff = point1[0] - point2[0] 
+        yDiff = point1[1] - point2[1]
+        dis = math.sqrt(xDiff*xDiff + yDiff*yDiff)
+        return dis
     pass
 
     def move_cost(self, current, next):
