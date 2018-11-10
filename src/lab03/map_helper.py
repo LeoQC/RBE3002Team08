@@ -11,19 +11,23 @@ def get_neighbors(loc, my_map):
         :param loc: tuple of location
         :return: list of tuples
     """
+
     neighbors = []
-    if (loc[0] >= 0 and loc[0] < my_map.map.info.height) and (loc[1] >= 0 and loc[1] < my_map.map.info.width):
+    if (loc[0] >= 0 and loc[0] < my_map.info.height) and (loc[1] >= 0 and loc[1] < my_map.info.width):
+        width = my_map.info.width
+        height = my_map.info.height
+
         # x+1,y
-        if (loc[0] + 1) < my_map.map.info.height:
+        if ((loc[0] + 1) < height) and (my_map.data[loc[0] + 1 + (loc[1]*width)] != 100):
             neighbors.append((loc[0] + 1, loc[1]))
         # x,y+1
-        if (loc[1] + 1) < my_map.map.info.width:
+        if ((loc[1] + width) < width) and (my_map.data[loc[0] + ((loc[1]+1)*width)] != 100):
             neighbors.append((loc[0], loc[1] + 1))
         # x,y-1
-        if (loc[1] - 1) > 0:
+        if ((loc[1] - width) > 0) and (my_map.data[loc[0] + ((loc[1]-1)*width)] != 100):
             neighbors.append((loc[0], loc[1] - 1))
         # x-1,y
-        if (loc[0] + 1) > 0:
+        if ((loc[0] - 1) > 0) and (my_map.data[loc[0] - 1 + (loc[1]*width)] != 100):
             neighbors.append((loc[0] - 1, loc[1]))
     else:
         print("Cell not valid")

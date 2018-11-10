@@ -35,17 +35,21 @@ class A_Star:
 
         """
             service call that uses A* to create a path.
-            This can be altered to also grab the orentation for better heuristic
+            This can be altered to also grab the orientation for better heuristic
             :param req: GetPlan
             :return: Path()
         """
         print 'handling a star'
-        self.path = GetPlan()
-        self.path.plan.poses[0].pose.pose.position.x = 0.0
-        self.path.plan.poses[0].pose.pose.position.y = 0.0
-        self.path.plan.poses[0].pose.pose.position.z = 0.0
+        self.dynamic_map_client()
 
-        return self.path
+        start = world_to_map(req.start.pose.position.x, req.start.pose.position.y, self.map)
+        end = world_to_map(req.goal.pose.position.x, req.goal.pose.position.y, self.map)
+
+        unfinishedPath = self.a_star(start, end)
+        finishedPath = self.reconstruct_path(start, end, unfinishedPath)
+        path = self.publish_path(finishedPath)
+
+        return path
 
        
 
@@ -88,7 +92,6 @@ class A_Star:
             if current == goal:
                 break
 
-
             for next in get_neighbors(current, self.map):
                 new_cost = cost_so_far[current] + self.euclidean_heuristic(current, goal) + 1
                 if next not in cost_so_far or new_cost < cost_so_far[next]:
@@ -126,7 +129,11 @@ class A_Star:
             :param came_from: dictionary of tuples
             :return: list of tuples
        """
-        pass
+
+        if came_from[goal] == start:
+            return came_from[goal]
+        else:
+            self.reconstruct_path(start, came_from[goal], came_from)
   
 
     def optimize_path(self, path):
@@ -151,10 +158,23 @@ class A_Star:
     def publish_path(self, points):
         """
             Create a Path() and publishes the cells if Paint is true
-            :param points: list of tuples of the path
-            :return: Path()
+            :param points: list of tuples of the path (in mapspace)
+            :return: Path() (in world space)
         """
-        pass
+
+        path = Path()
+        path.header.frame_id = 'map'
+        posList = []
+        for point in points:
+            worldPoint = map_to_world(point[0], point[1], self.map)
+            pos = PoseStamped()
+            pos.pose.position.x = worldPoint[0]
+            pos.pose.position.x = worldPoint[1]
+            posList.append(pos)
+
+        path.poses = posList
+
+        return path
 
 
 if __name__ == '__main__':
