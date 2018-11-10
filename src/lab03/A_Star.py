@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import rospy
-from nav_msgs.srv import GetPlan, Path
+from nav_msgs.srv import GetPlan
 from geometry_msgs.msg import PoseStamped
 
 
@@ -35,7 +35,12 @@ class A_Star:
             :return: Path()
         """
         print 'handling a star'
-        return
+        self.path = GetPlan()
+        self.path.plan.poses[0].pose.pose.position.x = 0.0
+        self.path.plan.poses[0].pose.pose.position.y = 0.0
+        self.path.plan.poses[0].pose.pose.position.z = 0.0
+
+        return self.path
 
        
 

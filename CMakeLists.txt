@@ -10,7 +10,6 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_python_setup()
 
 
-
 catkin_package(
 
   INCLUDE_DIRS src/lab02
@@ -23,6 +22,7 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
 )
+
 #############
 ## Testing ##
 #############
