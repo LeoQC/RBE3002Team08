@@ -6,6 +6,7 @@ from geometry_msgs.msg import PoseStamped
 from PriorityQueue import PriorityQueue
 from map_helper import *
 from nav_msgs.srv import GetMap
+import math
 
 
 class A_Star:
