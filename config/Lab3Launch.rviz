@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /TF1/Frames1
         - /TF1/Tree1
+        - /Planner Plan1
         - /Global Map1/Costmap1
         - /Global Map1/Planner1
         - /Local Map1/Polygon1
@@ -297,5 +298,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1680
-  X: 3000
-  Y: 24
+  X: 1320
+  Y: 48

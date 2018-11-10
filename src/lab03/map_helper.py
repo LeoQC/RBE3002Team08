@@ -42,6 +42,12 @@ def map_to_world(x, y, my_map):
         :param y: float of y position
         :return: tuple of converted point
     """
+    xOff = my_map.info.origin.position.x
+    yOff = my_map.info.origin.position.y
+    scale = my_map.info.resolution
+    xWorld = x * scale + xOff  
+    yWorld = y * scale + yOff
+    return (xWorld,yWorld)
 
 
 def to_cells(points, my_map):
