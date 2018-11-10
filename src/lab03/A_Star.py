@@ -5,6 +5,7 @@ from nav_msgs.msg import Path
 from geometry_msgs.msg import PoseStamped
 from PriorityQueue import PriorityQueue
 from map_helper import *
+from nav_msgs.srv import GetMap
 
 
 class A_Star:
@@ -50,7 +51,14 @@ class A_Star:
             This can be changed to call the expanded map
             :return:
         """
-        pass
+        rospy.wait_for_service('static_map') 
+        try:
+            currentMap = rospy.ServiceProxy('static_map', GetMap)
+            resp = currentMap()
+            self.map = resp.map
+        except rospy.ServiceException, e:
+            print "Service call failed: %s"%e
+
 
 
     def a_star(self, start, goal):

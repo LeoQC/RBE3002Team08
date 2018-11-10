@@ -17,22 +17,29 @@ from tf.transformations import euler_from_quaternion
 from std_msgs.msg import Empty
 
 # for read the maze
-from nav_msgs.msg import OccupancyGrid
 # for displaying path  
 from nav_msgs.msg import Path
 
-def printingMap(map):
-	width = map.info.width
-	print " width is :", width
-	
-	# output = "->"
-	# for cell in range (0,width):
-	# 	content = map.data[cell]
-	# 	if (content == 0 ):
-	# 		output +="O"
-	# 	else:
-	# 		output+="+"
-	# print output
+
+from nav_msgs.srv import GetMap
+
+def dynamic_map_client():
+
+	"""
+		Service call to get map and set class variables
+		This can be changed to call the expanded map
+		:return:
+	"""
+	# call nav_msgs/GetMap
+
+	rospy.wait_for_service('static_map') 
+	try:
+		currentMap = rospy.ServiceProxy('static_map', GetMap)
+		resp = currentMap()
+		print resp.map.data
+	except rospy.ServiceException, e:
+		print "Service call failed: %s"%e
+
 
 	
 
@@ -40,6 +47,9 @@ def printingMap(map):
 if __name__ == "__main__":
 
 	rospy.init_node('printingshit',log_level=rospy.INFO)
+
+
+	dynamic_map_client()
 
 	pathLength = 10 
 	
@@ -60,7 +70,8 @@ if __name__ == "__main__":
 
 	pub = rospy.Publisher('move_base/NavfnROS/plan',Path,queue_size=1)
 	
-	rospy.Subscriber("map",OccupancyGrid,printingMap)
+
+
 
 
 	for j in range(5): 
