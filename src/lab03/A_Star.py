@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 import rospy
 from nav_msgs.srv import GetPlan
+from nav_msgs.msg import Path
 from geometry_msgs.msg import PoseStamped
+from PriorityQueue import PriorityQueue
+from map_helper import *
+from nav_msgs.srv import GetMap
 
 
 class A_Star:
@@ -21,6 +25,7 @@ class A_Star:
         #   goal as geometry_msgs/PoseStamped
         #   plan as nav_msgs/Plan
         print 'ready to plan a path using A star'
+        self.map = None
         rospy.spin()
 
 
@@ -51,7 +56,14 @@ class A_Star:
             This can be changed to call the expanded map
             :return:
         """
-        pass
+        rospy.wait_for_service('static_map') 
+        try:
+            currentMap = rospy.ServiceProxy('static_map', GetMap)
+            resp = currentMap()
+            self.map = resp.map
+        except rospy.ServiceException, e:
+            print "Service call failed: %s"%e
+
 
 
     def a_star(self, start, goal):
@@ -62,7 +74,29 @@ class A_Star:
             :param goal: tuple of goal pose
             :return: dict of tuples
         """
-        pass
+
+        frontier = PriorityQueue()
+        frontier.put(start, 0)
+        came_from = {}
+        cost_so_far = {}
+        came_from[start] = None
+        cost_so_far[start] = 0
+
+        while not frontier.empty():
+            current = frontier.get()
+
+            if current == goal:
+                break
+
+
+            for next in get_neighbors(current, self.map):
+                new_cost = cost_so_far[current] + self.euclidean_heuristic(current, goal) + 1
+                if next not in cost_so_far or new_cost < cost_so_far[next]:
+                    cost_so_far[next] = new_cost
+                    frontier.put(next, new_cost)
+                    came_from[next] = current
+
+        return came_from
 
       
     def euclidean_heuristic(self, point1, point2):
