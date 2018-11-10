@@ -40,7 +40,12 @@ class A_Star:
             :return: Path()
         """
         print 'handling a star'
-        return
+        self.path = GetPlan()
+        self.path.plan.poses[0].pose.pose.position.x = 0.0
+        self.path.plan.poses[0].pose.pose.position.y = 0.0
+        self.path.plan.poses[0].pose.pose.position.z = 0.0
+
+        return self.path
 
        
 
