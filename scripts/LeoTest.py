@@ -122,6 +122,25 @@ def testingWorld_to_map(my_map):
 	printPath.poses=posList	
 	pathPub.publish(printPath)
 
+def euclidean_heuristic(point1, point2):
+	"""
+		calculate the dist between two points
+		:param point1: tuple of location
+		:param point2: tuple of location
+		:return: dist between two points
+	"""
+	xDiff = point1[0] - point2[0] 
+	yDiff = point1[1] - point2[1]
+	dis = math.sqrt(xDiff*xDiff + yDiff*yDiff)
+	return dis
+
+def TestEuclidean_heuristic():
+	point1 = (0,0)
+	point2 = (3,4)
+	dis = euclidean_heuristic(point1,point2)
+	print "TestEuclidean_heuristic"
+	print "Diss between: ",point1, point2," is : ",dis
+
 
 if __name__ == "__main__":
 
@@ -138,8 +157,9 @@ if __name__ == "__main__":
 	printEmptyPath()
 	
 	# testingMap_to_world(my_map)
-	testingWorld_to_map(my_map)
-
+	# testingWorld_to_map(my_map)
+	
+	TestEuclidean_heuristic()
 
 
 #  constructing a path 
