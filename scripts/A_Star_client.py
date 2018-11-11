@@ -14,11 +14,11 @@ def A_Star_client():
     StartPoint.pose.position.x=0
     StartPoint.pose.position.y=0
     EndPoint = PoseStamped()
-    EndPoint.pose.position.x=-3
-    EndPoint.pose.position.y=1.5
-
+    EndPoint.pose.position.x=-2
+    EndPoint.pose.position.y=-2
+    
     response = astar(StartPoint,EndPoint,0)
-    return response
+    return response.plan
 
 if __name__ == "__main__":
 
@@ -29,4 +29,9 @@ if __name__ == "__main__":
 
     resultPath =A_Star_client()
     print resultPath
+
+    # printPath = Path()
+    # printPath.header.frame_id = 'map'
+    # printPath.poses = resultPath.poses
+
     pathPub.publish(resultPath)

@@ -79,8 +79,8 @@ def map_to_world(x, y, my_map):
     xOff = my_map.info.origin.position.x
     yOff = my_map.info.origin.position.y
     scale = my_map.info.resolution
-    xWorld = x * scale + xOff  
-    yWorld = y * scale + yOff
+    xWorld = (x+0.5) * scale + xOff  
+    yWorld = (y+0.5) * scale + yOff
     return (xWorld,yWorld)
 
 

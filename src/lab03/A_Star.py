@@ -198,7 +198,7 @@ class A_Star:
             worldPoint = map_to_world(point[0], point[1], self.map)
             pos = PoseStamped()
             pos.pose.position.x = worldPoint[0]
-            pos.pose.position.x = worldPoint[1]
+            pos.pose.position.y = worldPoint[1]
             posList.append(pos)
 
         path.poses = posList
