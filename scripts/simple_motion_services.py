@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from simple_motion.srv import *
 import rospy
 import math
 from geometry_msgs.msg import Twist, Pose, PoseStamped, Quaternion
