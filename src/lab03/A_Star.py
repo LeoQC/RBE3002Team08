@@ -165,7 +165,22 @@ class A_Star:
             :param path: list of tuples
             :return: reduced list of tuples
         """
-        pass
+        x = 0 
+        y = 1
+        optPath = [path[0]]
+        for ii in range (1, len(path)-1):
+            past =optPath[-1]
+            current = path[ii]
+            future = path[ii+1]
+
+            if (past[x] == current[x] == future[x]) or (past[y] == current[y] == future[y]):
+                # move forward once for current and future
+                pass
+            else:
+                # current is the corner, store it, than move on.
+                optPath.append(current)
+        optPath.append(path[-1])
+        return optPath
 
     def paint_cells(self, frontier, came_from):
         # type: (list, list) -> None
