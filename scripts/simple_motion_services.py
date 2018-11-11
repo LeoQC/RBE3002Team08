@@ -157,24 +157,25 @@ if __name__ == '__main__':
     # print 'now'
     rob = Robot()
     # print 'hello world'
-    cmd = sys.argv[1]
-    if(cmd == 'd'):
-        print 'drive straight'
-        s = float(sys.argv[2])
-        d = float(sys.argv[3])
-        rob.drive_straight(s, d)
-    elif(cmd == 'r'):
-        print 'rotate'
-        angle = float(sys.argv[2])
-        rob.rotate(angle)
-    elif(cmd == 'n'):
-        print 'waiting for navigation instructions'
-        rospy.spin()
-    elif(cmd == 's'):
-        rob.stop()
-
-    else:
+    try:
+        cmd = sys.argv[1]
+        if(cmd == 'd'):
+            print 'drive straight'
+            s = float(sys.argv[2])
+            d = float(sys.argv[3])
+            rob.drive_straight(s, d)
+        elif(cmd == 'r'):
+            print 'rotate'
+            angle = float(sys.argv[2])
+            rob.rotate(angle)
+        elif(cmd == 'n'):
+            print 'waiting for navigation instructions'
+            rospy.spin()
+        elif(cmd == 's'):
+            rob.stop()
+    except:
         print 'simple motion functions'
         print '-----------------------'
-        print 'drive straight: speed, distance'
-        print 'rotate: angle'
+        print '\'d\' = drive straight: speed, distance'
+        print '\'r\' = rotate: angle'
+        print '\'n\' = rotate and drive to positions published on /move_base_simple/goal'

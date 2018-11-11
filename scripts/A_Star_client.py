@@ -17,7 +17,7 @@ class A_Star_client:
         rospy.init_node('aStarClient', log_level=rospy.INFO)
 
         self.sub = rospy.Subscriber('/odom', Odometry, self.odom_callback)
-        self.subGoal = rospy.Subscriber('/move_base_simple/goal', PoseStamped, self.get_path) #/team8_goal
+        self.subGoal = rospy.Subscriber('/team8_goal', PoseStamped, self.get_path) #/team8_goal
         self.pathPub = rospy.Publisher('/move_base/NavfnROS/plan', Path, queue_size=2)
         self.movePub = rospy.Publisher('/move_base_simple/goal', PoseStamped, queue_size=2)
 
