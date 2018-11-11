@@ -1,0 +1,46 @@
+<launch>
+    <!-- RBE3002Team08 = current package name -->
+    <!-- Turn on a fake turtlebot -->
+    <!-- argument -->
+    <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
+    <arg name="map_file" value="$(find RBE3002Team08)/maps/simple_map.yaml"/>
+
+
+    <param name="tb3_model" value="$(arg model)"/>
+
+    <node pkg="turtlebot3_fake" type="turtlebot3_fake_node" name="turtlebot3_fake_node" output="screen" />
+
+
+    <!-- <include file="$(find turtlebot3_navigation)/launch/turtlebot3_navigation.launch"/> -->
+       <!-- Turtlebot3 -->
+    <include file="$(find turtlebot3_bringup)/launch/turtlebot3_remote.launch">
+        <arg name="model" value="$(arg model)" />
+    </include>
+
+    <!-- Map server -->
+    <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
+
+    <!-- move_base -->
+    <include file="$(find turtlebot3_navigation)/launch/move_base.launch">
+        <arg name="model" value="$(arg model)" />
+    </include>
+
+    <!-- rviz -->
+    <node pkg="rviz" type="rviz" name="rviz" required="true"
+          args="-d $(find RBE3002Team08)/config/Lab3Launch.rviz"/>
+
+    <node pkg="tf" type="static_transform_publisher" name="map_broadcaster" args="0 0 0 0 0 0 1 map odom 100" />
+
+    <!-- a star server -->
+    <node pkg="RBE3002Team08" type="A_Star.py" name="a_star_server" />
+
+    <!-- simple motion driving -->
+    <node pkg="RBE3002Team08" type="simple_motion_services.py" name="simple_motion" args="n" />
+
+    <!-- a star client -->
+    <node pkg="RBE3002Team08" type="A_Star_client.py" name="a_star_client" />
+
+
+
+
+</launch>
