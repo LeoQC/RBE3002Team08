@@ -147,11 +147,28 @@ def optimize_path( path):
 		:param path: list of tuples
 		:return: reduced list of tuples
 	"""
+	x = 0 
+	y = 1
 	optPath = [path[0]]
+	for ii in range (1, len(path)-1):
+		past =optPath[-1]
+		current = path[ii]
+		future = path[ii+1]
 
-	optPath[-1]
-	# ii=1
-	# current[ii]
+		if (past[x] == current[x] == future[x]) or (past[y] == current[y] == future[y]):
+			# move forward once for current and future
+			pass
+		else:
+			# current is the corner, store it, than move on.
+			optPath.append(current)
+	optPath.append(path[-1])
+	return optPath
+	
+def TestOptimize_path(  ):
+	path1 = [ (1,1),(2,1),(3,1), (3,2) ,(3,3),(4,3),(4,4),(4,5),(4,6),(4,7),(5,7) ] 
+	print " given path1 is \n", path1
+	optPath1 = optimize_path(path1)
+	print " after opti \n" ,optPath1
 	
 
 
@@ -173,8 +190,8 @@ if __name__ == "__main__":
 	# testingMap_to_world(my_map)
 	# testingWorld_to_map(my_map)
 	
-	TestEuclidean_heuristic()
-
+	# TestEuclidean_heuristic()
+	TestOptimize_path()
 
 #  constructing a path 
 
