@@ -110,12 +110,13 @@ class Robot:
         twist.angular.x = 0.0; twist.angular.y = 0.0; twist.angular.z = 0.0
 
         # startA = self.roll
+        rotSpeed = 1
         curr = self.yaw
         if curr-angle<0:
-            twist.angular.z = 0.2
+            twist.angular.z = rotSpeed
 
         elif curr-angle>0:
-            twist.angular.z = -0.2
+            twist.angular.z = -1*rotSpeed
 
         print 'rotate ', angle
         self.pub.publish(twist)

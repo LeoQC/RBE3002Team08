@@ -50,7 +50,7 @@ class A_Star_client:
         response = self.astar(StartPoint, EndPoint, 0)
         self.pathPub.publish(response.plan)
 
-        # self.follow_path(response.plan)
+        self.follow_path(response.plan)
 
     def follow_path(self, path):
 
