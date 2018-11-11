@@ -6,6 +6,7 @@ from geometry_msgs.msg import Twist, Pose, PoseStamped, Quaternion
 from nav_msgs.msg import Odometry
 from turtlebot3_msgs.msg import SensorState
 from tf.transformations import euler_from_quaternion
+import sys
 
 
 class Robot:
@@ -19,7 +20,7 @@ class Robot:
 
         self.pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
         self.odoSub = rospy.Subscriber('odom', Odometry, self.odom_callback)
-        self.navtoSub = rospy.Subscriber('move_base_simple/goal', PoseStamped, self.nav_to_pose)
+        self.navtoSub = rospy.Subscriber('/team8_nav', PoseStamped, self.nav_to_pose)
         # print 'hello world initted'
         rospy.init_node('SimpleMotion', anonymous=True)
 
