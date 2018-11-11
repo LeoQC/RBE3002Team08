@@ -13,22 +13,26 @@ def get_neighbors(loc, my_map):
     """
 
     neighbors = []
-    if (loc[0] >= 0 and loc[0] < my_map.info.height) and (loc[1] >= 0 and loc[1] < my_map.info.width):
-        width = my_map.info.width
-        height = my_map.info.height
+
+    x = loc[0]
+    y = loc[1]
+    width = my_map.info.width
+    height = my_map.info.height
+
+    if (x >= 0 and x < height) and (y >= 0 and y < width):
 
         # x+1,y
-        if ((loc[0] + 1) < height) and (my_map.data[loc[0] + 1 + (loc[1]*width)] != 100):
-            neighbors.append((loc[0] + 1, loc[1]))
+        if ((x + 1) < height) and (my_map.data[x + 1 + (y*width)] != 100):
+            neighbors.append((x + 1, y))
         # x,y+1
-        if ((loc[1] + width) < width) and (my_map.data[loc[0] + ((loc[1]+1)*width)] != 100):
-            neighbors.append((loc[0], loc[1] + 1))
+        if ((y + 1) < width) and (my_map.data[x + ((y+1)*width)] != 100):
+            neighbors.append((x, y + 1))
         # x,y-1
-        if ((loc[1] - width) > 0) and (my_map.data[loc[0] + ((loc[1]-1)*width)] != 100):
-            neighbors.append((loc[0], loc[1] - 1))
+        if ((y - 1) > 0) and (my_map.data[x + ((y-1)*width)] != 100):
+            neighbors.append((x, y - 1))
         # x-1,y
-        if ((loc[0] - 1) > 0) and (my_map.data[loc[0] - 1 + (loc[1]*width)] != 100):
-            neighbors.append((loc[0] - 1, loc[1]))
+        if ((x - 1) > 0) and (my_map.data[x - 1 + (y*width)] != 100):
+            neighbors.append((x - 1, y))
     else:
         print("Cell not valid")
 
