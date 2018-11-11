@@ -16,10 +16,10 @@ class A_Star_client:
 
         rospy.init_node('aStarClient', log_level=rospy.INFO)
 
-        self.sub = rospy.Subscriber("/odom", Odometry, self.odom_callback)
-        self.subGoal = rospy.Subscriber("/team8_goal", PoseStamped, self.get_path)
-        self.pathPub = rospy.Publisher('move_base/NavfnROS/plan', Path, queue_size=2)
-        self.movePub = rospy.Publisher('move_base_simple/goal', PoseStamped, queue_size=2)
+        self.sub = rospy.Subscriber('/odom', Odometry, self.odom_callback)
+        self.subGoal = rospy.Subscriber('/move_base_simple/goal', PoseStamped, self.get_path) #/team8_goal
+        self.pathPub = rospy.Publisher('/move_base/NavfnROS/plan', Path, queue_size=2)
+        self.movePub = rospy.Publisher('/move_base_simple/goal', PoseStamped, queue_size=2)
 
 
         # StartPoint = PoseStamped()
@@ -50,7 +50,7 @@ class A_Star_client:
         response = self.astar(StartPoint, EndPoint, 0)
         self.pathPub.publish(response.plan)
 
-        self.follow_path(response.plan)
+        # self.follow_path(response.plan)
 
     def follow_path(self, path):
 
