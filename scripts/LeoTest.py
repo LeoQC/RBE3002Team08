@@ -141,6 +141,20 @@ def TestEuclidean_heuristic():
 	print "TestEuclidean_heuristic"
 	print "Diss between: ",point1, point2," is : ",dis
 
+def optimize_path( path):
+	"""
+		remove redundant points in hte path
+		:param path: list of tuples
+		:return: reduced list of tuples
+	"""
+	optPath = [path[0]]
+
+	optPath[-1]
+	# ii=1
+	# current[ii]
+	
+
+
 
 if __name__ == "__main__":
 

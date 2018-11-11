@@ -47,8 +47,19 @@ class A_Star:
         end = world_to_map(req.goal.pose.position.x, req.goal.pose.position.y, self.map)
 
         unfinishedPath = self.a_star(start, end)
+
+        print " right after Astar"
+        print unfinishedPath
+
         finishedPath = self.reconstruct_path(start, end, unfinishedPath)
+
+        print" after reconstruct"
+        print finishedPath
+
         path = self.publish_path(finishedPath)
+
+        print "after publish path"
+        print path
 
         return path
 
@@ -79,6 +90,8 @@ class A_Star:
             :param goal: tuple of goal pose
             :return: dict of tuples
         """
+        print "inside A star--"
+        print "start :" ,start," goal :",goal
 
         frontier = PriorityQueue()
         frontier.put(start, 0)
@@ -89,16 +102,19 @@ class A_Star:
 
         while not frontier.empty():
             current = frontier.get()
-
-            if current == goal:
+            # if ( current[0] == goal[0]) and (current[1] == goal[1]):
+            if current==goal:
+                print "found goal"
                 break
 
+            print "get Neighbor return \n" ,get_neighbors(current, self.map)
             for next in get_neighbors(current, self.map):
                 new_cost = cost_so_far[current] + self.euclidean_heuristic(current, goal) + 1
                 if next not in cost_so_far or new_cost < cost_so_far[next]:
                     cost_so_far[next] = new_cost
                     frontier.put(next, new_cost)
                     came_from[next] = current
+            print "dis and coord in frontiers \n" , frontier.elements
 
         return came_from
 
