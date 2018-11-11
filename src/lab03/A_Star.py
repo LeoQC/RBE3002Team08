@@ -24,18 +24,19 @@ class A_Star:
         self.planService = rospy.Service('A_Star', GetPlan, self.handle_a_star)
 
         self.costmap = rospy.Subscriber("/move_base/global_costmap/costmap", OccupancyGrid, self.get_occupancy_grid)
+        # self.costmap = rospy.Publisher("/move_base/global_costmap/costmap", OccupancyGrid, queue_size=2)
+
+        # while self.occupancy_grid == None and (not rospy.is_shutdown()):
+        #     pass
         # self.clear_cells()
-        # Get plan Service contains fields:
-        #   start as geometry_msgs/PoseStamped
-        #   goal as geometry_msgs/PoseStamped
-        #   plan as nav_msgs/Plan
+
         print 'ready to plan a path using A star'
         self.map = None
 
         rospy.spin()
 
     def get_occupancy_grid(self, map):
-        self.occupancy_grid = map.data
+        self.occupancy_grid = map
 
 
     def handle_a_star(self, req):
@@ -176,10 +177,32 @@ class A_Star:
         """
         pass
 
-    # def clear_cells(self):
-    #     for cell in self.occupancy_grid:
-    #         if cell != 100 or cell != 0:
+    def clear_cells(self):
 
+        new_occupancy_grid = []
+
+        for cell in self.occupancy_grid.data:
+            if not (cell == 100 or cell == 0):
+                cell = 50
+                # print("here")
+            new_occupancy_grid.append(cell)
+        # self.occupancy_grid.data = new_occupancy_grid
+
+        occupancy_grid = self.occupancy_grid
+        occupancy_grid.data = new_occupancy_grid
+        # occupancy_grid = OccupancyGrid()
+        occupancy_grid.header.seq = self.occupancy_grid.header.seq + 1
+
+        now = rospy.Time.now()
+
+        occupancy_grid.header.frame_id = "map"
+        occupancy_grid.header.stamp.secs = now.secs
+        occupancy_grid.header.stamp.nsecs = now.nsecs
+        # occupancy_grid.info
+        # occupancy_grid.data = self.occupancy_grid
+        print(occupancy_grid)
+        self.costmap.publish(occupancy_grid)
+        # self.occupancy_grid = occupancy_grid
 
     def publish_path(self, points):
         """
