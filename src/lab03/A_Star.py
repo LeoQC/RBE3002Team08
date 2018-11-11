@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rospy
 from nav_msgs.srv import GetPlan
-from nav_msgs.msg import Path
+from nav_msgs.msg import Path, OccupancyGrid
 from geometry_msgs.msg import PoseStamped
 from PriorityQueue import PriorityQueue
 from map_helper import *
@@ -18,18 +18,24 @@ class A_Star:
             It is accessed using a service call. It can the publish grid cells
             to show the frontier,closed and path.
         """
+        self.occupancy_grid = None
 
         rospy.init_node("a_star")  # start node
         self.planService = rospy.Service('A_Star', GetPlan, self.handle_a_star)
+
+        self.costmap = rospy.Subscriber("/move_base/global_costmap/costmap", OccupancyGrid, self.get_occupancy_grid)
+        # self.clear_cells()
         # Get plan Service contains fields:
         #   start as geometry_msgs/PoseStamped
         #   goal as geometry_msgs/PoseStamped
         #   plan as nav_msgs/Plan
         print 'ready to plan a path using A star'
         self.map = None
+
         rospy.spin()
 
-
+    def get_occupancy_grid(self, map):
+        self.occupancy_grid = map.data
 
 
     def handle_a_star(self, req):
@@ -169,6 +175,10 @@ class A_Star:
             :return:
         """
         pass
+
+    # def clear_cells(self):
+    #     for cell in self.occupancy_grid:
+    #         if cell != 100 or cell != 0:
 
 
     def publish_path(self, points):
