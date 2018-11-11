@@ -40,7 +40,6 @@ class A_Star:
             :param req: GetPlan
             :return: Path()
         """
-        print 'handling a star'
         self.dynamic_map_client()
 
         start = world_to_map(req.start.pose.position.x, req.start.pose.position.y, self.map)
@@ -48,18 +47,9 @@ class A_Star:
 
         unfinishedPath = self.a_star(start, end)
 
-        print " right after Astar"
-        print unfinishedPath
-
         finishedPath = self.reconstruct_path(start, end, unfinishedPath)
 
-        print" after reconstruct"
-        print finishedPath
-
         path = self.publish_path(finishedPath)
-
-        print "after publish path"
-        print path
 
         return path
 
@@ -90,8 +80,6 @@ class A_Star:
             :param goal: tuple of goal pose
             :return: dict of tuples
         """
-        print "inside A star--"
-        print "start :" ,start," goal :",goal
 
         frontier = PriorityQueue()
         frontier.put(start, 0)
@@ -103,8 +91,7 @@ class A_Star:
         while not frontier.empty():
             current = frontier.get()
             # if ( current[0] == goal[0]) and (current[1] == goal[1]):
-            if current==goal:
-                print "found goal"
+            if current == goal:
                 break
 
             print "get Neighbor return \n" ,get_neighbors(current, self.map)
