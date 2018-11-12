@@ -23,6 +23,11 @@ from nav_msgs.msg import Path
 
 from nav_msgs.srv import GetMap
 
+# testing gridcells 
+from nav_msgs.msg import GridCells, OccupancyGrid
+from geometry_msgs.msg import Point
+
+
 
 def dynamic_map_client():
 
@@ -171,13 +176,32 @@ def TestOptimize_path(  ):
 	print " after opti \n" ,optPath1
 	
 
+def TestGridCellDisplay(wfPub , my_map):
+	
+	cells = []
 
+	paintMap  = my_map
+	width = my_map.info.width
+
+	for cell in my_map.data:
+		cell = 0
+		cells.append(cell)
+	for i in range (1,10):
+		x=i ; y=3
+		cells[x+y*width] = 50
+	paintMap.data = cells 
+
+
+	wfPub.publish(paintMap)
+	print "pubed the fake grid"
 
 if __name__ == "__main__":
 
 	rospy.init_node('printingshit',log_level=rospy.INFO)
 
 	pathPub = rospy.Publisher('move_base/NavfnROS/plan',Path,queue_size=2)
+	wfPub = rospy.Publisher('AstarDisplay/WaveFront', OccupancyGrid, queue_size=2)
+
 	rospy.sleep(0.3) # needed for things to be able to publish 
 
 
@@ -185,40 +209,17 @@ if __name__ == "__main__":
 	my_map = dynamic_map_client()
 
 
-	printEmptyPath()
+	# various testes
+	# printEmptyPath()
 	
 	# testingMap_to_world(my_map)
 	# testingWorld_to_map(my_map)
 	
 	# TestEuclidean_heuristic()
-	TestOptimize_path()
+	# TestOptimize_path()
 
-#  constructing a path 
+	TestGridCellDisplay(wfPub,my_map)
 
-	# pathLength = 10 
-	# navPath = Path()
-	# posList = []
-	# ii=0
-	# for ii in range(0,pathLength):
-	# 	pos = PoseStamped()
-	# 	pos.pose.position.x = 0 
-	# 	pos.pose.position.y = ii/2
-	# 	posList.append(pos)
-	# navPath.header.frame_id = 'map'
-	# # print(posList)
-	# navPath.poses=posList	
-
-	# pub = rospy.Publisher('move_base/NavfnROS/plan',Path,queue_size=1)
-	
+	rospy.spin()
 
 
-# printing this path
-
-	# for j in range(1): 
-	# 	print "I bloody did something"
-	# 	pub.publish(navPath)
-	# 	# pub.publish(EmptyPath)
-	# 	print "I did something else!"
-	# 	rospy.sleep(0.5)
-	# 	if rospy.is_shutdown() :
-	# 		break

@@ -23,8 +23,9 @@ class A_Star:
         rospy.init_node("a_star")  # start node
         self.planService = rospy.Service('A_Star', GetPlan, self.handle_a_star)
 
-        self.costmap = rospy.Subscriber("/move_base/global_costmap/costmap", OccupancyGrid, self.get_occupancy_grid)
-        # self.costmap = rospy.Publisher("/move_base/global_costmap/costmap", OccupancyGrid, queue_size=2)
+        # self.costmap = rospy.Subscriber("/move_base/global_costmap/costmap", OccupancyGrid, self.get_occupancy_grid)
+        self.costmap = rospy.Publisher("/move_base/global_costmap/costmap", OccupancyGrid, queue_size=2)
+        self.wfPub = rospy.Publisher('AstarDisplay/WaveFront', OccupancyGrid, queue_size=2)
 
         # while self.occupancy_grid == None and (not rospy.is_shutdown()):
         #     pass
@@ -95,20 +96,22 @@ class A_Star:
         came_from[start] = None
         cost_so_far[start] = 0
 
+
         while not frontier.empty():
             current = frontier.get()
             # if ( current[0] == goal[0]) and (current[1] == goal[1]):
             if current == goal:
                 break
 
-            print "get Neighbor return \n" ,get_neighbors(current, self.map)
+            # print "get Neighbor return \n" ,get_neighbors(current, self.map)
             for next in get_neighbors(current, self.map):
                 new_cost = cost_so_far[current] + self.euclidean_heuristic(current, goal) + 1
                 if next not in cost_so_far or new_cost < cost_so_far[next]:
                     cost_so_far[next] = new_cost
                     frontier.put(next, new_cost)
                     came_from[next] = current
-            print "dis and coord in frontiers \n" , frontier.elements
+            self.paint_cells(frontier,came_from)
+            # print "dis and coord in frontiers \n" , frontier.elements
 
         return came_from
 
@@ -190,6 +193,18 @@ class A_Star:
             :param came_from: tuples of the point on the closed set
             :return:
         """
+        newCells =[0] * len(self.map.data)
+        paintMap = self.map
+        width = self.map.info.width 
+
+        print "in paint cells"
+        for waveCell in frontier.elements:
+            
+            print type(waveCell), waveCell
+            x = waveCell[1][0] ; y = waveCell[1][1]
+            newCells[x+y*width] = 50 # waveCell[0]
+        paintMap.data=newCells
+        self.wfPub.publish(paintMap)
         pass
 
     def clear_cells(self):
