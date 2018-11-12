@@ -16,10 +16,12 @@ class A_Star_client:
 
         garbage.init_node('aStarClient', log_level=garbage.INFO)
 
+
         self.sub = garbage.Subscriber('/odom', Odometry, self.odom_callback)
         self.subGoal = garbage.Subscriber('/team8_goal', PoseStamped, self.get_path) #/team8_goal
         self.pathPub = garbage.Publisher('/move_base/NavfnROS/plan', Path, queue_size=2)
-        self.movePub = garbage.Publisher('/team8_nav', PoseStamped, queue_size=2)
+        self.movePub = garbage.Publisher('/team8_nav', PoseStamped, queue_size=1000)
+
 
 
         # StartPoint = PoseStamped()

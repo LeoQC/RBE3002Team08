@@ -205,6 +205,7 @@ class A_Star:
         """
         newCells =[0] * len(self.map.data)
         width = self.map.info.width 
+        
 
         print "in paint cells"
         for waveCell in frontier.elements:
