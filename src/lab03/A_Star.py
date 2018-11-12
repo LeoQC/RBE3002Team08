@@ -18,12 +18,10 @@ class A_Star:
             It is accessed using a service call. It can the publish grid cells
             to show the frontier,closed and path.
         """
-        self.occupancy_grid = None
 
         rospy.init_node("a_star")  # start node
         self.planService = rospy.Service('A_Star', GetPlan, self.handle_a_star)
 
-        # self.costmap = rospy.Subscriber("/move_base/global_costmap/costmap", OccupancyGrid, self.get_occupancy_grid)
         self.costmap = rospy.Publisher("/move_base/global_costmap/costmap", OccupancyGrid, queue_size=2)
         
         self.dynamic_map_client()
@@ -35,11 +33,8 @@ class A_Star:
         
         self.wfPub = rospy.Publisher('AstarDisplay/WaveFront', OccupancyGrid, queue_size=2)
 
-        # while self.occupancy_grid == None and (not rospy.is_shutdown()):
-        #     pass
-        # self.clear_cells()
 
-        print 'ready to plan a path using A star'
+        print 'Ready to plan a path using A star'
         self.map = None
 
         rospy.spin()
@@ -121,7 +116,7 @@ class A_Star:
                     came_from[next] = current
             # display the frontier
             self.paint_cells(frontier,came_from)
-            rospy.sleep(0.1)
+            rospy.sleep(0.005)
             # print "dis and coord in frontiers \n" , frontier.elements
 
         return came_from
@@ -208,50 +203,21 @@ class A_Star:
         width = self.map.info.width 
 
 
-        print "in paint cells"
         for waveCell in frontier.elements:
-            
-            print type(waveCell), waveCell
+
             x = waveCell[1][0] ; y = waveCell[1][1]
             newCells[x+y*width] = 50 # waveCell[0]
 
-        if came_from.values() != None:
+        if came_from.keys() != None:
             for cameKey in came_from.keys():
-                x= came_from.get(cameKey)[0]
-                y= came_from.get(cameKey)[1]
+                if not came_from.get(cameKey) == None:
+                    x= came_from.get(cameKey)[0]
+                    y= came_from.get(cameKey)[1]
                 newCells[x+y*width] = 30 # waveCell[0]
 
 
         self.paintMap.data=newCells
         self.wfPub.publish(self.paintMap)
-        pass
-
-    def clear_cells(self):
-
-        new_occupancy_grid = []
-
-        for cell in self.occupancy_grid.data:
-            if not (cell == 100 or cell == 0):
-                cell = 50
-                # print("here")
-            new_occupancy_grid.append(cell)
-        # self.occupancy_grid.data = new_occupancy_grid
-
-        occupancy_grid = self.occupancy_grid
-        occupancy_grid.data = new_occupancy_grid
-        # occupancy_grid = OccupancyGrid()
-        occupancy_grid.header.seq = self.occupancy_grid.header.seq + 1
-
-        now = rospy.Time.now()
-
-        occupancy_grid.header.frame_id = "map"
-        occupancy_grid.header.stamp.secs = now.secs
-        occupancy_grid.header.stamp.nsecs = now.nsecs
-        # occupancy_grid.info
-        # occupancy_grid.data = self.occupancy_grid
-        print(occupancy_grid)
-        self.costmap.publish(occupancy_grid)
-        # self.occupancy_grid = occupancy_grid
 
     def publish_path(self, points):
         """
@@ -265,6 +231,7 @@ class A_Star:
         posList = []
         for point in points:
             worldPoint = map_to_world(point[0], point[1], self.map)
+            print(worldPoint)
             pos = PoseStamped()
             pos.pose.position.x = worldPoint[0]
             pos.pose.position.y = worldPoint[1]
