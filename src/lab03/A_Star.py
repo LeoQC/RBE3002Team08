@@ -29,10 +29,7 @@ class A_Star:
         self.paintMap.info =  self.map.info # TODO change to copy later
         self.paintMap.header = self.map.header
 
-
-        
         self.wfPub = rospy.Publisher('AstarDisplay/WaveFront', OccupancyGrid, queue_size=2)
-
 
         print 'Ready to plan a path using A star'
         self.map = None
@@ -60,7 +57,9 @@ class A_Star:
 
         finishedPath = self.reconstruct_path(start, end, unfinishedPath)
 
-        path = self.publish_path(finishedPath)
+        optimizedPath = self.optimize_path(finishedPath)
+
+        path = self.publish_path(optimizedPath)  # self.publish_path(finishedPath)
 
         return path
 
@@ -203,17 +202,22 @@ class A_Star:
         width = self.map.info.width 
 
 
+
+
+        # if came_from.keys() != None:
+        for cameKey in came_from.keys():
+            x = cameKey[0]
+            y= cameKey[1]
+            newCells[x + y * width] = 30
+            # if not came_from.get(cameKey) == None:
+            #     x= came_from.get(cameKey)[0]
+            #     y= came_from.get(cameKey)[1]
+            # newCells[x+y*width] = 30 # waveCell[0]
+
         for waveCell in frontier.elements:
 
             x = waveCell[1][0] ; y = waveCell[1][1]
             newCells[x+y*width] = 50 # waveCell[0]
-
-        if came_from.keys() != None:
-            for cameKey in came_from.keys():
-                if not came_from.get(cameKey) == None:
-                    x= came_from.get(cameKey)[0]
-                    y= came_from.get(cameKey)[1]
-                newCells[x+y*width] = 30 # waveCell[0]
 
 
         self.paintMap.data=newCells
