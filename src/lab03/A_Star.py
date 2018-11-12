@@ -25,6 +25,14 @@ class A_Star:
 
         # self.costmap = rospy.Subscriber("/move_base/global_costmap/costmap", OccupancyGrid, self.get_occupancy_grid)
         self.costmap = rospy.Publisher("/move_base/global_costmap/costmap", OccupancyGrid, queue_size=2)
+        
+        self.dynamic_map_client()
+        self.paintMap=OccupancyGrid()
+        self.paintMap.info =  self.map.info # TODO change to copy later
+        self.paintMap.header = self.map.header
+
+
+        
         self.wfPub = rospy.Publisher('AstarDisplay/WaveFront', OccupancyGrid, queue_size=2)
 
         # while self.occupancy_grid == None and (not rospy.is_shutdown()):
@@ -110,7 +118,9 @@ class A_Star:
                     cost_so_far[next] = new_cost
                     frontier.put(next, new_cost)
                     came_from[next] = current
+            # display the frontier
             self.paint_cells(frontier,came_from)
+            rospy.sleep(0.1)
             # print "dis and coord in frontiers \n" , frontier.elements
 
         return came_from
@@ -194,7 +204,6 @@ class A_Star:
             :return:
         """
         newCells =[0] * len(self.map.data)
-        paintMap = self.map
         width = self.map.info.width 
 
         print "in paint cells"
@@ -203,8 +212,8 @@ class A_Star:
             print type(waveCell), waveCell
             x = waveCell[1][0] ; y = waveCell[1][1]
             newCells[x+y*width] = 50 # waveCell[0]
-        paintMap.data=newCells
-        self.wfPub.publish(paintMap)
+        self.paintMap.data=newCells
+        self.wfPub.publish(self.paintMap)
         pass
 
     def clear_cells(self):
