@@ -103,6 +103,7 @@ class A_Star:
         cost_so_far = {}
         came_from[start] = None
         cost_so_far[start] = 0
+        
 
 
         while not frontier.empty():
@@ -205,7 +206,7 @@ class A_Star:
         """
         newCells =[0] * len(self.map.data)
         width = self.map.info.width 
-        
+
 
         print "in paint cells"
         for waveCell in frontier.elements:
@@ -213,6 +214,14 @@ class A_Star:
             print type(waveCell), waveCell
             x = waveCell[1][0] ; y = waveCell[1][1]
             newCells[x+y*width] = 50 # waveCell[0]
+
+        if came_from.values() != None:
+            for cameKey in came_from.keys():
+                x= came_from.get(cameKey)[0]
+                y= came_from.get(cameKey)[1]
+                newCells[x+y*width] = 30 # waveCell[0]
+
+
         self.paintMap.data=newCells
         self.wfPub.publish(self.paintMap)
         pass
