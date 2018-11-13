@@ -39,7 +39,7 @@ class Robot:
         def setZ(self , speed):
             self.msg.angular.z = speed 
         def setX(self, speed):
-            self.msg.linear.x=speed 
+            self.msg.linear.x = speed
 
 
 
@@ -52,7 +52,7 @@ class Robot:
         print "setup odem "
 
         self.plan = [ self.PoseStruct(0,0,0)]
-        self.planSeq=-1
+        self.planSeq =-1
         
         self.current = 	self.PoseStruct(0,0,0)
         self.desire =	self.PoseStruct(0,0,0.0)
@@ -68,7 +68,7 @@ class Robot:
         # this is designed to be run once until robot is at the goal
     def tracePath(self):
         print " start tracing with seq of: " , self.planSeq
-        self.desire.seq = self.planSeq #  mark which plan is it tracing
+        self.desire.seq = self.planSeq  # mark which plan is it tracing
 
         for point in self.plan:
             self.desire.x = point.x
@@ -107,10 +107,10 @@ class Robot:
         dis = math.sqrt( xDiff*xDiff + yDiff*yDiff)  
         pGain = 1      
         moveSpeed = pGain*dis
-        if moveSpeed>0.8 :
-            moveSpeed = 1
-        if moveSpeed<0.3 :
-            moveSpeed = 0.3
+        if moveSpeed > 0.7:
+            moveSpeed = 0.7
+        if moveSpeed < 0.2:
+            moveSpeed = 0.2
         self.valCmd.setX(moveSpeed)
         self.valCmd.push()
 
@@ -121,9 +121,9 @@ class Robot:
         angleDiff = self.desire.heading - self.current.heading   # calculate the amount of turnning needed
         angleDiff = self.angleFix(angleDiff)            # fit them within -180 to 180 
         turnSpeed = angleDiff * pGain    
-        if abs(turnSpeed)>1.4 :
+        if abs(turnSpeed) > 1.4:
             turnSpeed = math.copysign(1.4,turnSpeed)
-        if abs(turnSpeed)<0.4 :
+        if abs(turnSpeed) < 0.4:
             turnSpeed = math.copysign(0.4,turnSpeed)
 
         print "self,desire,diff : %.3f  %.3f  %.3f" %(self.current.heading,self.desire.heading,angleDiff)
