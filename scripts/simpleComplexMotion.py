@@ -32,6 +32,7 @@ class Robot:
             self.pub = pub
             self.msg = Twist()
             self.sendTime = None
+
         def push(self):
             self.pub.publish(self.msg)
             self.sendTime =rospy.get_time()
@@ -54,10 +55,9 @@ class Robot:
         self.planSeq=-1
         
         self.current = 	self.PoseStruct(0,0,0)
-        self.desire =	self.PoseStruct(0,0,0)
-        self.tolerance= self.PoseStruct(0.07,0.07,math.pi/6)
+        self.desire =	self.PoseStruct(0,0,0.0)
+        self.tolerance= self.PoseStruct(0.01,0.01,math.pi/10)
         self.valCmd = 	self.ValCmdStruct(rospy.Publisher('cmd_vel', Twist, queue_size=1))
-        
         self.navtoSub = rospy.Subscriber('move_base/NavfnROS/plan', Path,self. planParser_callback)
         while self.current.seq <0 and self.current.seq<0 :
             pass
@@ -67,9 +67,9 @@ class Robot:
         # the core controller
         # this is designed to be run once until robot is at the goal
     def tracePath(self):
-        pass 
-
+        print " start tracing with seq of: " , self.planSeq
         self.desire.seq = self.planSeq #  mark which plan is it tracing
+
         for point in self.plan:
             self.desire.x = point.x
             self.desire.y = point.y
@@ -79,12 +79,18 @@ class Robot:
                 yDiff = self.desire.y - self.current.y
                 self.desire.heading = math.atan2(yDiff,xDiff)
                 # control loops 
+                
                 self.rotateControl()
-                if abs(self.desire.heading) < self.tolerance.heading:
-                    self.valCmd.msg.linear.x =0
+                if abs(self.desire.heading - self.current.heading) >  self.tolerance.heading:
+                    self.valCmd.msg.linear.x = 0
                     self.valCmd.push()
                 else:
                     self.linearControl()
+
+
+                if rospy.is_shutdown() == True :
+                    self.stopMoving()
+                    return
             # reached the point, going to the next one
             self.stopMoving()
             print "reached the point, go to next one"
@@ -96,13 +102,34 @@ class Robot:
         print " done with the current path"
 
     def linearControl(self):
-        pass
-        return True
+        xDiff = self.desire.x - self.current.x
+        yDiff = self.desire.y - self.current.y
+        dis = math.sqrt( xDiff*xDiff + yDiff*yDiff)  
+        pGain = 1      
+        moveSpeed = pGain*dis
+        if moveSpeed>0.8 :
+            moveSpeed = 1
+        if moveSpeed<0.3 :
+            moveSpeed = 0.3
+        self.valCmd.setX(moveSpeed)
+        self.valCmd.push()
+
+        return False 
 
     def rotateControl(self):
-        pass
-        self.desire.heading
-        return True
+        pGain = 1.2
+        angleDiff = self.desire.heading - self.current.heading   # calculate the amount of turnning needed
+        angleDiff = self.angleFix(angleDiff)            # fit them within -180 to 180 
+        turnSpeed = angleDiff * pGain    
+        if abs(turnSpeed)>1.4 :
+            turnSpeed = math.copysign(1.4,turnSpeed)
+        if abs(turnSpeed)<0.4 :
+            turnSpeed = math.copysign(0.4,turnSpeed)
+
+        print "self,desire,diff : %.3f  %.3f  %.3f" %(self.current.heading,self.desire.heading,angleDiff)
+        self.valCmd.setZ(turnSpeed)
+        self.valCmd.push()
+        return False
 
     def odom_callback(self,data):
         """
@@ -113,18 +140,22 @@ class Robot:
         self.current.y = data.pose.pose.position.y
         quart = data.pose.pose.orientation 
         qq = [quart.x, quart.y, quart.z, quart.w] 
-        self.current.heading = euler_from_quaternion(qq)  
+        self.current.heading = euler_from_quaternion(qq)[2]  
         self.current.seq = data.header.seq
 
     def planParser_callback(self,plan):
         # param plan: Path
+        print "self seq: " , self.planSeq
+        print ( "given seq :"+ str(plan.header.seq) )
         self.planSeq = plan.header.seq
         self.plan=[]
         for point in plan.poses:
             pos = self.PoseStruct(point.pose.position.x,point.pose.position.y,0)
             self.plan.append(pos)
-            print pos 
-        print " in plan parser "
+            # print pos 
+        print " recieved the new plan! "
+        print "self seq: " , self.planSeq
+        print("desire seq: " + str(self.desire.seq) )
         
     def angleFix (self,angle):
         # change the input angle to within the -pi to pi range. 

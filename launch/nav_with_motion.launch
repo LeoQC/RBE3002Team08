@@ -48,7 +48,7 @@
     <node pkg="RBE3002Team08" type="A_Star.py" name="a_star_server" />
 
     <!-- simple motion driving -->
-    <node pkg="RBE3002Team08" type="simple_motion_services.py" name="simple_motion" args="n" />
+    <node pkg="RBE3002Team08" type="simpleComplexMotion.py" name="motion" args="n" />
 
     <!-- a star client -->
     <node pkg="RBE3002Team08" type="A_Star_client.py" name="a_star_client" />
