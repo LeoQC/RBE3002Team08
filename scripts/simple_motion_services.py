@@ -21,7 +21,7 @@ class Robot:
         self.pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
         self.odoSub = rospy.Subscriber('odom', Odometry, self.odom_callback)
         self.navtoSub = rospy.Subscriber('/team8_nav', PoseStamped, self.nav_to_pose)
-        # print 'hello world initted'
+
         rospy.init_node('SimpleMotion', anonymous=True)
 
 

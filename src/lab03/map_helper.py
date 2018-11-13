@@ -38,20 +38,6 @@ def get_neighbors(loc, my_map):
 
     return neighbors
 
-def is_valid_loc(loc, my_map):
-    """
-        Gets if a point is a legal location
-        :param loc: tuple of location
-        :return: boolean is a legal point
-    """
-
-
-  
-
-
-def convert_location(loc, my_map):
-    """converts points to the grid"""
-   
 
 def world_to_map(x, y, my_map):
     """
@@ -67,7 +53,8 @@ def world_to_map(x, y, my_map):
     yMap = (y - yOff) / scale
     xMap = int(xMap)
     yMap = int(yMap)
-    return (xMap,yMap)
+    return (xMap, yMap)
+
 
 def map_to_world(x, y, my_map):
     """
@@ -81,27 +68,4 @@ def map_to_world(x, y, my_map):
     scale = my_map.info.resolution
     xWorld = (x+0.5) * scale + xOff  
     yWorld = (y+0.5) * scale + yOff
-    return (xWorld,yWorld)
-
-
-def to_cells(points, my_map):
-    """
-        Creates a GridCell() for Rviz distplay
-        :param points: list of tuples
-        :return: GridCell()
-    """
-
-
-def to_poses(points, my_map):
-    """
-        Creates a GridCell() for Rviz distplay
-        :param points: list of tuples
-        :return: GridCell()
-    """
-
-
-def index_to_point(point, my_map):
-    """convert a point to a index"""
-
-def point_to_index(location, my_map):
-    """convert a index to a point"""
+    return (xWorld, yWorld)
