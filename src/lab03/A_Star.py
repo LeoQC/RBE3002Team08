@@ -25,8 +25,8 @@ class A_Star:
         self.costmap = rospy.Publisher("/move_base/global_costmap/costmap", OccupancyGrid, queue_size=2)
         
         self.dynamic_map_client()
-        self.paintMap=OccupancyGrid()
-        self.paintMap.info =  self.map.info # TODO change to copy later
+        self.paintMap = OccupancyGrid()
+        self.paintMap.info = self.map.info
         self.paintMap.header = self.map.header
 
         self.wfPub = rospy.Publisher('AstarDisplay/WaveFront', OccupancyGrid, queue_size=2)
@@ -35,9 +35,6 @@ class A_Star:
         self.map = None
 
         rospy.spin()
-
-    def get_occupancy_grid(self, map):
-        self.occupancy_grid = map
 
 
     def handle_a_star(self, req):
@@ -59,7 +56,7 @@ class A_Star:
 
         optimizedPath = self.optimize_path(finishedPath)
 
-        path = self.publish_path(optimizedPath)  # self.publish_path(finishedPath)
+        path = self.publish_path(optimizedPath)
 
         return path
 
@@ -102,11 +99,10 @@ class A_Star:
 
         while not frontier.empty():
             current = frontier.get()
-            # if ( current[0] == goal[0]) and (current[1] == goal[1]):
+
             if current == goal:
                 break
 
-            # print "get Neighbor return \n" ,get_neighbors(current, self.map)
             for next in get_neighbors(current, self.map):
                 # get the cost from start to the next
                 next_cost_so_far = cost_so_far[current] + abs(current[0]-next[0]) + abs(current[1]-next[1])
@@ -114,14 +110,12 @@ class A_Star:
                 if (next not in cost_so_far) or next_cost_so_far < cost_so_far[next]: # only comparing g(n) since h(n) will be the same
                     cost_so_far[next] = next_cost_so_far
                     # need to remember put heuristic only in here, frontier make estimation base on the whole thing
-                    frontier.put(next, next_cost_so_far+self.euclidean_heuristic(next, goal))
-                    # frontier.put(next,next_cost_so_far+self.square_heuristic(next,goal))
+                    frontier.put(next, next_cost_so_far + self.euclidean_heuristic(next, goal))
                     came_from[next] = current
 
             # display the frontier
-            self.paint_cells(frontier,came_from)
+            self.paint_cells(frontier, came_from)
             rospy.sleep(0.005)
-            # print "dis and coord in frontiers \n" , frontier.elements
 
         return came_from
     
@@ -150,16 +144,6 @@ class A_Star:
         yDiff = point1[1] - point2[1]
         return abs(xDiff) + abs(yDiff)
 
-    def move_cost(self, current, next):
-        """
-              calculate the dist between two points
-              :param current: tuple of location
-              :param next: tuple of location
-              :return: dist between two points
-        """
-        pass
-
-
     def reconstruct_path(self, start, goal, came_from):
         """
             Rebuild the path from a dictionary
@@ -181,7 +165,6 @@ class A_Star:
             path.append(stack.pop())
 
         return path
-  
 
     def optimize_path(self, path):
         """
@@ -193,7 +176,7 @@ class A_Star:
         y = 1
         optPath = [path[0]]
         for ii in range (1, len(path)-1):
-            past =optPath[-1]
+            past = optPath[-1]
             current = path[ii]
             future = path[ii+1]
 
@@ -214,29 +197,23 @@ class A_Star:
             :param came_from: tuples of the point on the closed set
             :return:
         """
-        newCells =[0] * len(self.map.data)
+        newCells = [0] * len(self.map.data)
         width = self.map.info.width 
-
-
-
 
         # drawing the visited area
         for cameKey in came_from.keys():
             x = cameKey[0]
-            y= cameKey[1]
+            y = cameKey[1]
             newCells[x + y * width] = 30
-            # if not came_from.get(cameKey) == None:
-            #     x= came_from.get(cameKey)[0]
-            #     y= came_from.get(cameKey)[1]
-            # newCells[x+y*width] = 30 # waveCell[0]
 
-        # draw the frontire with a different color
+        # draw the frontier with a different color
         for waveCell in frontier.elements:
-            x = waveCell[1][0] ; y = waveCell[1][1]
-            newCells[x+y*width] = 50 # waveCell[0]
+            x = waveCell[1][0]
+            y = waveCell[1][1]
+            newCells[x+y*width] = 50
 
-        # update the occupency grid object and publish it to the costmap
-        self.paintMap.data=newCells
+        # update the occupancy grid object and publish it to the costmap
+        self.paintMap.data = newCells
         self.wfPub.publish(self.paintMap)
 
     def publish_path(self, points):
@@ -251,7 +228,6 @@ class A_Star:
         posList = []
         for point in points:
             worldPoint = map_to_world(point[0], point[1], self.map)
-            print(worldPoint)
             pos = PoseStamped()
             pos.pose.position.x = worldPoint[0]
             pos.pose.position.y = worldPoint[1]
