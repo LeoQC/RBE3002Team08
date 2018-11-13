@@ -108,19 +108,23 @@ class A_Star:
 
             # print "get Neighbor return \n" ,get_neighbors(current, self.map)
             for next in get_neighbors(current, self.map):
-                new_cost = cost_so_far[current] + self.euclidean_heuristic(current, goal) + 1
-                if next not in cost_so_far or new_cost < cost_so_far[next]:
-                    cost_so_far[next] = new_cost
-                    frontier.put(next, new_cost)
+                # get the cost from start to the next
+                next_cost_so_far = cost_so_far[current] + abs(current[0]-next[0]) + abs(current[1]-next[1])
+
+                if (next not in cost_so_far) or next_cost_so_far < cost_so_far[next]: # only comparing g(n) since h(n) will be the same
+                    cost_so_far[next] = next_cost_so_far
+                    # need to remember put heuristic only in here, frontier make estimation base on the whole thing
+                    frontier.put(next, next_cost_so_far+self.euclidean_heuristic(next, goal))
+                    # frontier.put(next,next_cost_so_far+self.square_heuristic(next,goal))
                     came_from[next] = current
+
             # display the frontier
             self.paint_cells(frontier,came_from)
             rospy.sleep(0.005)
             # print "dis and coord in frontiers \n" , frontier.elements
 
         return came_from
-
-      
+    
     def euclidean_heuristic(self, point1, point2):
         """
             calculate the dist between two points
@@ -133,6 +137,18 @@ class A_Star:
         dis = math.sqrt(xDiff*xDiff + yDiff*yDiff)
         return dis
     pass
+
+    def square_heuristic(self,point1,point2):
+    # in case of 4-space movement, this is prefect estamition
+        """
+            calculate the dist between two points assuming only go streight and 90 degree turn
+            :param point1: tuple of location
+            :param point2: tuple of location
+            :return: dist between two points
+        """
+        xDiff = point1[0] - point2[0] 
+        yDiff = point1[1] - point2[1]
+        return abs(xDiff) + abs(yDiff)
 
     def move_cost(self, current, next):
         """
@@ -204,7 +220,7 @@ class A_Star:
 
 
 
-        # if came_from.keys() != None:
+        # drawing the visited area
         for cameKey in came_from.keys():
             x = cameKey[0]
             y= cameKey[1]
@@ -214,12 +230,12 @@ class A_Star:
             #     y= came_from.get(cameKey)[1]
             # newCells[x+y*width] = 30 # waveCell[0]
 
+        # draw the frontire with a different color
         for waveCell in frontier.elements:
-
             x = waveCell[1][0] ; y = waveCell[1][1]
             newCells[x+y*width] = 50 # waveCell[0]
 
-
+        # update the occupency grid object and publish it to the costmap
         self.paintMap.data=newCells
         self.wfPub.publish(self.paintMap)
 
